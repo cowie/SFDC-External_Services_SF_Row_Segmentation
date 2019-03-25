@@ -72,26 +72,10 @@
   },
   &quot;definitions&quot;: {
     &quot;SuccessResponse&quot;: {
-      &quot;required&quot;: [
-        &quot;SFID&quot;
-      ],
-      &quot;properties&quot;: {
-        &quot;SFID&quot;: {
-          &quot;description&quot;: &quot;SFID of the new contact&quot;,
-          &quot;type&quot;: &quot;string&quot;
-        }
-      }
+      &quot;type&quot;: &quot;string&quot;
     },
     &quot;ErrorResponse&quot;: {
-      &quot;required&quot;: [
-        &quot;Errormsg&quot;
-      ],
-      &quot;properties&quot;: {
-        &quot;Errormsg&quot;: {
-          &quot;description&quot;: &quot;error message&quot;,
-          &quot;type&quot;: &quot;string&quot;
-        }
-      }
+      &quot;type&quot;: &quot;string&quot;
     }
   }
 }</schema>

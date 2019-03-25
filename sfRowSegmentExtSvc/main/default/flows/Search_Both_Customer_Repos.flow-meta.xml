@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Search_Customer_master</name>
+        <label>Search Customer master</label>
+        <locationX>764</locationX>
+        <locationY>762</locationY>
+        <actionName>HerokuCustomerMasterSearch_searchEmail__Service</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Customer_Found_In_Master</targetReference>
+        </connector>
+        <inputParameters>
+            <name>emailAddress</name>
+            <value>
+                <elementReference>varEmailAddress</elementReference>
+            </value>
+        </inputParameters>
+        <outputParameters>
+            <assignToReference>varCMError</assignToReference>
+            <name>ErrorResponse_401</name>
+        </outputParameters>
+        <outputParameters>
+            <assignToReference>varCMError</assignToReference>
+            <name>ErrorResponse_404</name>
+        </outputParameters>
+        <outputParameters>
+            <assignToReference>varCMError</assignToReference>
+            <name>ErrorResponse_503</name>
+        </outputParameters>
+        <outputParameters>
+            <assignToReference>varNewSFContactID</assignToReference>
+            <name>SuccessResponse_200</name>
+        </outputParameters>
+    </actionCalls>
+    <decisions>
+        <description>Default Email, backup Phone</description>
+        <name>By_Email_or_By_Phone</name>
+        <label>By Email or By Phone?</label>
+        <locationX>505</locationX>
+        <locationY>297</locationY>
+        <defaultConnector>
+            <targetReference>You_Didn_t_Enter_Anything</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Nothing Valid.</defaultConnectorLabel>
+        <rules>
+            <name>Email_Valid</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varEmailAddress</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Find_SF_Contact_By_Email</targetReference>
+            </connector>
+            <label>Email Valid</label>
+        </rules>
+        <rules>
+            <name>Phone_As_Backup</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varEmailAddress</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>varPhoneNumber</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>You_Didn_t_Enter_Anything</targetReference>
+            </connector>
+            <label>Phone As Backup</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Customer_Found_In_Master</name>
+        <label>Customer Found In Master</label>
+        <locationX>912</locationX>
+        <locationY>764</locationY>
+        <defaultConnector>
+            <targetReference>Customer_Not_Found</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No Customer Inserted</defaultConnectorLabel>
+        <rules>
+            <name>Customer_Inserted_to_SF</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varNewSFContactID</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_New_Salesforce_Contact</targetReference>
+            </connector>
+            <label>Customer Inserted to SF</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>SF_Contact_Record_Found</name>
+        <label>SF Contact Record Found?</label>
+        <locationX>756</locationX>
+        <locationY>576</locationY>
+        <defaultConnector>
+            <targetReference>Search_Customer_master</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>SF Contact Not Found</defaultConnectorLabel>
+        <rules>
+            <name>SF_Contact_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varSFContact</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>ALLDONE</targetReference>
+            </connector>
+            <label>SF Contact Found</label>
+        </rules>
+    </decisions>
+    <interviewLabel>Search Both Customer Repos {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Search Both Customer Repos</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Find_SF_Contact_By_Email</name>
+        <label>Find SF Contact By Email</label>
+        <locationX>515</locationX>
+        <locationY>574</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>SF_Contact_Record_Found</targetReference>
+        </connector>
+        <filters>
+            <field>Email</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varEmailAddress</elementReference>
+            </value>
+        </filters>
+        <object>Contact</object>
+        <outputReference>varSFContact</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <name>Find_SF_Contact_By_Phone</name>
+        <label>Find SF Contact By Phone</label>
+        <locationX>764</locationX>
+        <locationY>358</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>SF_Contact_Record_Found</targetReference>
+        </connector>
+        <filters>
+            <field>Phone</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varPhoneNumber</elementReference>
+            </value>
+        </filters>
+        <object>Contact</object>
+        <outputReference>varSFContact</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_New_Salesforce_Contact</name>
+        <label>Get New Salesforce Contact</label>
+        <locationX>1159</locationX>
+        <locationY>764</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>ALLDONE</targetReference>
+        </connector>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varNewSFContactID</elementReference>
+            </value>
+        </filters>
+        <object>Contact</object>
+        <outputReference>varSFContact</outputReference>
+        <queriedFields>Id</queriedFields>
+    </recordLookups>
+    <screens>
+        <name>ALLDONE</name>
+        <label>ALL DONE</label>
+        <locationX>1159</locationX>
+        <locationY>572</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>lblLoL</name>
+            <fieldText>Yo what up
+Email: {!varEmailAddress}
+Phone: {!varPhoneNumber}
+Email Valid: {!Email_Valid}
+Phone Valid: {!Phone_As_Backup}
+
+SF Contact: {!varSFContact}
+SF Contact Found: {!SF_Contact_Found}</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Customer_Not_Found</name>
+        <label>Customer Not Found</label>
+        <locationX>920</locationX>
+        <locationY>975</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>lbl404</name>
+            <fieldText>Bro - Stall. We don&#39;t know who this is so we need to trace the call.
+Error: {!varCMError}
+SFID: {!varNewSFContactID}</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Search_For_Customer</name>
+        <label>Search For Customer</label>
+        <locationX>265</locationX>
+        <locationY>295</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>By_Email_or_By_Phone</targetReference>
+        </connector>
+        <fields>
+            <name>lblEmailField</name>
+            <fieldText>Search Via Email:</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>inputEmail</name>
+            <extensionName>flowruntime:email</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>Search By Email</stringValue>
+                </value>
+            </inputParameters>
+            <inputParameters>
+                <name>placeholder</name>
+                <value>
+                    <stringValue>customer@example.com</stringValue>
+                </value>
+            </inputParameters>
+            <isRequired>true</isRequired>
+            <outputParameters>
+                <assignToReference>varEmailAddress</assignToReference>
+                <name>value</name>
+            </outputParameters>
+        </fields>
+        <fields>
+            <name>inputPhone</name>
+            <extensionName>flowruntime:phone</extensionName>
+            <fieldType>ComponentInstance</fieldType>
+            <inputParameters>
+                <name>label</name>
+                <value>
+                    <stringValue>Search By Phone Number</stringValue>
+                </value>
+            </inputParameters>
+            <isRequired>true</isRequired>
+            <outputParameters>
+                <assignToReference>varPhoneNumber</assignToReference>
+                <name>value</name>
+            </outputParameters>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>You_Didn_t_Enter_Anything</name>
+        <label>You Didn&#39;t Enter Anything</label>
+        <locationX>521</locationX>
+        <locationY>180</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>lblExitError</name>
+            <fieldText>Dude(tte) you didn&#39;t enter anything. Can&#39;t make lemonade without some lemons.</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <startElementReference>Search_For_Customer</startElementReference>
+    <status>Draft</status>
+    <variables>
+        <name>varCMError</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varEmailAddress</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>ID Created by External Service</description>
+        <name>varNewSFContactID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varPhoneNumber</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varSFContact</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Contact</objectType>
+    </variables>
+</Flow>

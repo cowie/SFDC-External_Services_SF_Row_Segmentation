@@ -130,7 +130,7 @@
         <label>FindNewCustomer</label>
         <locationX>614</locationX>
         <locationY>320</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Inserted_the_new_customer_in_SF</targetReference>
         </connector>
@@ -152,7 +152,7 @@
         <label>SearchSFContacts</label>
         <locationX>247</locationX>
         <locationY>237</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>isContactInSF</targetReference>
         </connector>
@@ -242,8 +242,8 @@ Salesforce Contact ID: {!varContact.Id}</fieldText>
     <screens>
         <name>No_Go_Bud</name>
         <label>No Go Bud</label>
-        <locationX>861</locationX>
-        <locationY>390</locationY>
+        <locationX>874</locationX>
+        <locationY>491</locationY>
         <allowBack>true</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>true</allowPause>

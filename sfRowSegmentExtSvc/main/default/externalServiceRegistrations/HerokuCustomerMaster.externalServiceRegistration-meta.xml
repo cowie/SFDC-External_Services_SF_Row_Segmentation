@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExternalServiceRegistration xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>HerokuCustomerMaster</label>
+    <namedCredential>HerokuCustomerMaster</namedCredential>
+    <schema>{
+  &quot;swagger&quot;: &quot;2.0&quot;,
+  &quot;info&quot;: {
+    &quot;title&quot;: &quot;Customer Master Example&quot;,
+    &quot;description&quot;: &quot;Simulates an OAS customer master API for feeding a Salesforce cloud instance on the fly via External Services.&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;
+  },
+  &quot;basePath&quot;: &quot;/&quot;,
+  &quot;schemes&quot;: [
+    &quot;https&quot;
+  ],
+  &quot;paths&quot;: {
+    &quot;/swagger&quot;: {},
+    &quot;/searchPhone&quot;: {
+      &quot;get&quot;: {
+        &quot;operationId&quot;: &quot;searchPhone&quot;,
+        &quot;summary&quot;: &quot;Searches for user via phone&quot;,
+        &quot;description&quot;: &quot;Searches PG table for phone presented, if successful, inserts that contact row into SF&quot;,
+        &quot;consumes&quot;: [
+          &quot;text/plain&quot;
+        ],
+        &quot;parameters&quot;: [
+          {
+            &quot;name&quot;: &quot;phoneNumber&quot;,
+            &quot;description&quot;: &quot;Phone provided by agent to search master&quot;,
+            &quot;in&quot;: &quot;query&quot;,
+            &quot;required&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        ],
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Customer found in master and inserted into Salesforce. Returning SFID&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/SuccessResponse&quot;
+            }
+          },
+          &quot;401&quot;: {
+            &quot;description&quot;: &quot;Error authenticating to Salesforce for insert. Customer found successfully.&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/ErrorResponse&quot;
+            }
+          },
+          &quot;404&quot;: {
+            &quot;description&quot;: &quot;Customer not found in database.&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/ErrorResponse&quot;
+            }
+          },
+          &quot;503&quot;: {
+            &quot;description&quot;: &quot;Error connecting to Master database.&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/ErrorResponse&quot;
+            }
+          }
+        }
+      }
+    },
+    &quot;/searchEmail&quot;: {
+      &quot;get&quot;: {
+        &quot;operationId&quot;: &quot;searchEmail&quot;,
+        &quot;summary&quot;: &quot;Searches for user via email&quot;,
+        &quot;description&quot;: &quot;Searches PG database table for email presented, if successful, inserts that contact row into Salesforce database and returns the confirmation, a 15/18 digit Salesforce ID.&quot;,
+        &quot;consumes&quot;: [
+          &quot;text/plain&quot;
+        ],
+        &quot;parameters&quot;: [
+          {
+            &quot;name&quot;: &quot;emailAddress&quot;,
+            &quot;description&quot;: &quot;Email provided by agent to search master&quot;,
+            &quot;in&quot;: &quot;query&quot;,
+            &quot;required&quot;: true,
+            &quot;type&quot;: &quot;string&quot;
+          }
+        ],
+        &quot;responses&quot;: {
+          &quot;200&quot;: {
+            &quot;description&quot;: &quot;Customer found in master and inserted into Salesforce. Returning SFID.&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/SuccessResponse&quot;
+            }
+          },
+          &quot;401&quot;: {
+            &quot;description&quot;: &quot;Error authenticating to Salesforce for insert. Customer found successfully.&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/ErrorResponse&quot;
+            }
+          },
+          &quot;404&quot;: {
+            &quot;description&quot;: &quot;Customer not found in database.&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/ErrorResponse&quot;
+            }
+          },
+          &quot;503&quot;: {
+            &quot;description&quot;: &quot;Error connecting to Master database.&quot;,
+            &quot;schema&quot;: {
+              &quot;$ref&quot;: &quot;#/definitions/ErrorResponse&quot;
+            }
+          }
+        }
+      }
+    }
+  },
+  &quot;definitions&quot;: {
+    &quot;SuccessResponse&quot;: {
+      &quot;type&quot;: &quot;string&quot;
+    },
+    &quot;ErrorResponse&quot;: {
+      &quot;type&quot;: &quot;string&quot;
+    }
+  }
+}</schema>
+    <schemaType>OpenApi</schemaType>
+    <schemaUrl>/swagger</schemaUrl>
+    <status>Complete</status>
+</ExternalServiceRegistration>

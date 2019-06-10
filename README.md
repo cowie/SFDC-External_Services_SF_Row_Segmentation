@@ -17,7 +17,7 @@ For my sanity, I'm going to assume you wanna work from a scratch org, and use SF
 * Create yourself a scratch org. I included an easy basic file for it at `config/rowSegmentOrgDef.json`, so basically `sfdx force:org:create -s -a iWasLazy -f config/rowSegmentOrgDef.json` if ya lazy.
 * Run `sfdx force:user:password:generate` and jot down ya username and password.
 * Run `sfdx force:org:open` and reset your security token. You will need this.
-* Click [![Deploy](https://heroku.com/deploy?template=https://github.com/cowie/Heroku-External_Services_SF_Row_Segmentation)] to create the Heroku master - Environment variables will ask for the type SF environment (production / sandbox) as well as username and password. Make sure to append your security token to your password. Remember how I told you to do that?
+* Click [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/cowie/Heroku-External_Services_SF_Row_Segmentation)] to create the Heroku master - Environment variables will ask for the type SF environment (production / sandbox) as well as username and password. Make sure to append your security token to your password. Remember how I told you to do that?
 * `sfdx force:source:push`
 * In Salesforce, change named credential endpoint to your herokuapp's url. Should be somethingsomething.herokuapp.com.
 * Activate the two flows if you want to use them in app. Example Screen Flow isn't necessary, but it does show use of the headless subflow to do this work.
